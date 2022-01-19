@@ -1,0 +1,14 @@
+# very simple docker if you want
+version: "3.4"
+
+services:
+  user_service:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: 'npm run serve'
