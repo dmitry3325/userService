@@ -4,13 +4,10 @@
   "description": "DNB user service",
   "main": "dist/index.js",
   "scripts": {
-    "serve": "npm run start:dev",
-    "build": "webpack",
+    "serve": "cross-env NODE_ENV=development nodemon -e ts --exec \"npm run tsc && node ./dist/src/index.js\"",
     "build:prod": "cross-env NODE_ENV=production npm run swagger && npm run tsc",
-    "start:dev": "cross-env NODE_ENV=development webpack",
-    "run:dev": "cross-env NODE_ENV=development nodemon --inspect build/index.js",
     "lint": "eslint -c .eslintrc.js ./src/**/*.ts",
-    "tsc": "tsc --traceResolution && tscpaths -p tsconfig.json -s ./ -o ./dist",
+    "tsc": "tsc && tscpaths -p tsconfig.json -s ./ -o ./dist",
     "test": "mocha -r ts-node/register -r tsconfig-paths/register tests/**/*.ts",
     "serve:swagger": "npm run swagger && npm run serve",
     "swagger": "swagger-jsdoc -d swaggerDef.js -o resources/doc.json"
@@ -36,7 +33,6 @@
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-import-resolver-node": "^0.3.4",
     "eslint-import-resolver-typescript": "^2.3.0",
-    "eslint-import-resolver-webpack": "^0.13.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.22.1",
     "nodemon": "^2.0.4",
@@ -45,10 +41,6 @@
     "ts-node": "^9.0.0",
     "tsconfig-paths": "^3.9.0",
     "tscpaths": "0.0.9",
-    "typescript": "^4.5.4",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12",
-    "webpack-node-externals": "^2.5.2",
-    "webpack-shell-plugin": "^0.5.0"
+    "typescript": "^4.5.4"
   }
 }

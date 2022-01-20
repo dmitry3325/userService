@@ -3,7 +3,7 @@ import AppError from '@/common/AppError';
 import { ErrorCodes } from '@/types/Error';
 
 export class AbstractEntity {
-  protected id!: number;
+  public id!: number;
   private _storage = storage;
   protected _blockToUpdate: string[] = [];
 
