@@ -20,7 +20,7 @@ class Storage {
     return this;
   }
 
-  public create<T>(entity: AbstractEntity): number {
+  public create(entity: AbstractEntity): number {
     const entityStorage = this.getEntityStorage(entity.constructor.name);
 
     const key = (entityStorage.size + 1).toString();
@@ -30,7 +30,7 @@ class Storage {
     return toSave.id;
   }
 
-  public update<T>(id: number, entity: AbstractEntity, blockedFields: string[] = []): boolean {
+  public update(id: number, entity: AbstractEntity, blockedFields: string[] = []): boolean {
     const entityStorage = this.getEntityStorage(entity.constructor.name);
     if (!id) {
       throw new AppError(`Entity id is missing`, ErrorCodes.StorageError, 400);
