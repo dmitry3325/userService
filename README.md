@@ -30,7 +30,12 @@ npm run lint
 npm run swagger
 ```
 
-### Api doc here
+### Api doc here:
 ```
 http://localhost:3000/api-docs/
+```
+
+### Postman collection if you like: 
+```
+./resources/postman
 ```
