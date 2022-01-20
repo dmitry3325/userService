@@ -12,13 +12,14 @@ const { PORT = 3000, NODE_ENV } = process.env;
 
 app.use(express.json());
 
+// Add headers before the routes are defined
+app.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  next();
+});
 routeInit(app);
-
-// Only show swagger if we're not in production.
-/*if (NODE_ENV !== 'production') {
-    // eslint-disable-next-line
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-}*/
 
 const errorHandler = (err: AppError, req: Request, res: Response, next: NextFunction) => {
   const resBody = new ErrorResponse(err.message, err.errorCode || ErrorCodes.GeneralError);

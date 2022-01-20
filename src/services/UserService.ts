@@ -12,7 +12,7 @@ export default class UserService {
     if (!user.validate()) {
       throw new AppError('Validation Error', ErrorCodes.ServiceError, 400);
     }
-    const id = user.create();
+    const id = this.storage.create(user);
     return { result: true, data: { id } };
   }
 
@@ -26,11 +26,11 @@ export default class UserService {
     if (!user.setData(data).validate()) {
       throw new AppError('Validation Error', ErrorCodes.ServiceError, 400);
     }
-
-    return { result: user.update(), data: user.getData() };
+    const res = this.storage.update(id, user);
+    return { result: res, data: user.getData() };
   }
 
-  public getAll(): EntityData[] {
-    return this.storage.findAll(User).map(user => user.getData());
+  public findBy(params: EntityData = {}): EntityData[] {
+    return this.storage.findBy(User, params).map(user => user.getData());
   }
 }

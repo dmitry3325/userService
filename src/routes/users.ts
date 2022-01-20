@@ -3,6 +3,7 @@ import AppError from '@/common/AppError';
 import { ErrorCodes } from '@/types/Error';
 import { Mod11 } from '@/tools/Mod11';
 import UserService from '@/services/UserService';
+import { EntityData } from "@/common/Storage";
 
 const router = express.Router();
 const userService = new UserService();
@@ -34,7 +35,6 @@ router.post('/users/', (req: Request, res: Response) => {
   if (typeof req.body === 'undefined') {
     throw new AppError('Missing body', ErrorCodes.RequestError, 400);
   }
-
   return res.send(userService.create(req.body));
 });
 
@@ -94,7 +94,7 @@ router.put('/users/:id/', (req: Request, res: Response) => {
  *          $ref: '#/definitions/ErrorResponse'
  */
 router.get('/users/', (req: Request, res: Response) => {
-  return res.send(userService.getAll());
+  return res.send(userService.findBy(req.query as EntityData));
 });
 
 /**

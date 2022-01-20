@@ -17,7 +17,7 @@ storage.initEntityStorage(Test.name);
 describe('Storage', () => {
   it('Should create', () => {
     for (let i = 1; i <= createCount; i++) {
-      const id = storage.create(Test.name, data);
+      const id = storage.create(new Test(data));
       expect(id).to.equal(i);
     }
   });
@@ -28,7 +28,9 @@ describe('Storage', () => {
   });
 
   it('Should update', () => {
-    const res = storage.update(Test.name, 1, { testField: 'anotherValue' });
+    const test = storage.find(Test, 1);
+    test.setData({ testField: 'anotherValue' })
+    const res = storage.update(1, test);
     expect(res).to.equal(true);
     const test1 = storage.find(Test, 1);
     expect(test1.testField).to.equal('anotherValue');

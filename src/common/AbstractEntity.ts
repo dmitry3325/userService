@@ -4,7 +4,7 @@ import { ErrorCodes } from '@/types/Error';
 
 export class AbstractEntity {
   public id!: number;
-  private _storage = storage;
+  protected _storage = storage;
   protected _blockToUpdate: string[] = [];
 
   public constructor(data = {}) {
@@ -32,14 +32,6 @@ export class AbstractEntity {
 
   public validate(): boolean {
     return true;
-  }
-
-  public create(): number {
-    return this._storage.create(this.constructor.name, this.getData());
-  }
-
-  public update(): boolean {
-    return this._storage.update(this.constructor.name, this.id, this.getData(), this._blockToUpdate);
   }
 
   public getData(): EntityData {

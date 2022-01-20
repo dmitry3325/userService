@@ -1,5 +1,6 @@
 import AppError from '@/common/AppError';
 import { ErrorCodes } from '@/types/Error';
+import { AbstractEntity } from '@/common/AbstractEntity';
 
 export type EntityData = { [key: string]: string | number | boolean };
 
@@ -19,18 +20,18 @@ class Storage {
     return this;
   }
 
-  public create(name: string, data: EntityData): number {
-    const entityStorage = this.getEntityStorage(name);
+  public create<T>(entity: AbstractEntity): number {
+    const entityStorage = this.getEntityStorage(entity.constructor.name);
 
     const key = (entityStorage.size + 1).toString();
-    const toSave = Object.assign({}, data);
+    const toSave = Object.assign({}, entity.getData());
     toSave.id = parseInt(key);
     entityStorage.set(key, toSave);
     return toSave.id;
   }
 
-  public update(name: string, id: number, newData: EntityData, blockedFields: string[] = []): boolean {
-    const entityStorage = this.getEntityStorage(name);
+  public update<T>(id: number, entity: AbstractEntity, blockedFields: string[] = []): boolean {
+    const entityStorage = this.getEntityStorage(entity.constructor.name);
     if (!id) {
       throw new AppError(`Entity id is missing`, ErrorCodes.StorageError, 400);
     }
@@ -39,19 +40,23 @@ class Storage {
       throw new AppError(`Entity id is missing`, ErrorCodes.StorageError, 400);
     }
 
-    Object.entries(newData).forEach(([key, value]) => {
+    Object.entries(entity.getData()).forEach(([key, value]) => {
       if (
         typeof oldData[key] !== 'undefined' &&
         oldData[key] != value &&
         (key === 'id' || blockedFields.indexOf(key) !== -1)
       ) {
-        throw new AppError(`Field "${key}" cant be updated for entity ${name}`, ErrorCodes.StorageError, 400);
+        throw new AppError(
+          `Field "${key}" cant be updated for entity ${entity.constructor.name}`,
+          ErrorCodes.StorageError,
+          400,
+        );
       }
 
       Object.assign(this, { [key]: value });
     });
 
-    entityStorage.set(id.toString(), Object.assign(oldData, newData));
+    entityStorage.set(id.toString(), Object.assign(oldData, entity.getData()));
     return true;
   }
 
@@ -79,10 +84,10 @@ class Storage {
 
     return Array.from(entityStorage.values())
       .filter((item: EntityData) => {
-        let found = false;
+        let found = true;
         Object.entries(params).forEach(([key, value]) => {
-          if (typeof item[key] !== 'undefined' && item[key] === value) {
-            return (found = true);
+          if (typeof item[key] !== 'undefined' && item[key] !== value) {
+            return (found = false);
           }
         });
         return found;
@@ -93,12 +98,11 @@ class Storage {
   }
 
   private getEntityStorage(name: string): EntityStorage {
-    const entityStorage = this.storage.get(name);
-    if (!entityStorage) {
-      throw new AppError(`Storage ${name} not found`, ErrorCodes.StorageError);
+    if (!this.storage.has(name)) {
+      this.initEntityStorage(name);
     }
 
-    return entityStorage;
+    return <Map<string, EntityData>>this.storage.get(name);
   }
 }
 
