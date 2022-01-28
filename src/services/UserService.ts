@@ -12,6 +12,11 @@ export default class UserService {
     if (!user.validate()) {
       throw new AppError('Validation Error', ErrorCodes.ServiceError, 400);
     }
+
+    if (this.storage.findBy(User, { accountNumber: user.accountNumber }).length) {
+      throw new AppError('User: "accountNumber" exists', ErrorCodes.EntityError, 400);
+    }
+
     const id = this.storage.create(user);
     return { result: true, data: { id } };
   }

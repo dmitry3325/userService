@@ -48,10 +48,6 @@ export class User extends AbstractEntity {
       throw new AppError('User: "accountNumber" is not valid', ErrorCodes.EntityError, 400);
     }
 
-    if (this._storage.findBy(User, { accountNumber: this.accountNumber }).length) {
-      throw new AppError('User: "accountNumber" exists', ErrorCodes.EntityError, 400);
-    }
-
     if (!Object.keys(Currency).includes(this.currency)) {
       throw new AppError('User: "currency" is not valid', ErrorCodes.EntityError, 400);
     }
